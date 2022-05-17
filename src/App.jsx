@@ -1,42 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import logo from './logo.svg'
 import './App.css'
+import { fetchConfig } from './services'
+import { setTheme } from './styles'
+
+import Links from './components/Links'
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  useEffect(() => {
+    async function getConfig() {
+      console.log("loading config")
+      console.time("setTheme")
+       const config = await fetchConfig()
+      console.log("config loaded", config.theme)
+       setTheme(config.theme)
+      setIsInitialized(true)
+      console.timeEnd("setTheme")
+      
+    }
+    getConfig()
+  }, [])
+  
+  
+  const [counto, setCount] = useState(1)
+  const [isInitialized, setIsInitialized] = useState(false)
+  const hello = 1;
 
+  if(!isInitialized) { 
+    return (
+      <div className="App">Loading...</div>
+    )
+  }
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Vite rocks</p>
+        <p>Vite rocks a</p>
         <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
+          <button type="button" onClick={() => setCount((counto) => counto + 1)}>
+            cuount is: {counto}
           </button>
         </p>
         <p>
           Edit <code>App.jsx</code> and save to test HMR updates.
         </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
+        <Links/>
       </header>
     </div>
   )
